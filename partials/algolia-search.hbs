@@ -11,16 +11,22 @@
 
 <script>
   const client = algoliasearch('QMJYL5WYTI', '4318af87aa3ce128708f1153556c6108');
-  const index = client.initIndex('news');
+  const index = client.initIndex('test-news'); // CHANGE THIS BACK TO 'news'!
   const screenWidth = window.screen.width;
   const screenHeight = window.screen.height;
   const hitsToRender = (screenWidth >= 767 && screenHeight >= 768) ? 8 : 5;
+  const searchForm = document.getElementById('search-form');
+  const input = document.getElementById('search-input');
+  let searchQuery, hitSelected, hits;
   autocomplete('#search-input', { 
       hint: false,
       keyboardShortcuts: ['s', 191]
     }, [
     {
-      source: autocomplete.sources.hits(index, { hitsPerPage: hitsToRender }),
+      source: autocomplete.sources.hits(index, { 
+        hitsPerPage: hitsToRender,
+        analytics: (!searchQuery || searchQuery.length === 0) ? false : true
+      }),
       debounce: 250,
       templates: {
         suggestion: (suggestion, result) => {
@@ -78,10 +84,6 @@
     If no hits in the Autocomplete dropdown are highlighted,
     treat input like normal search bar
   */
-  const searchForm = document.getElementById('search-form');
-  const input = document.getElementById('search-input');
-  let searchQuery, hitSelected, hits;
-
   input.addEventListener('keyup', e => {
     searchQuery = input.value;
   });
